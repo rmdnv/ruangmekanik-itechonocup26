@@ -59,8 +59,8 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/rmdnv/ruangmekanik:latest
-            ghcr.io/rmdnv/ruangmekanik:${{ github.sha }}
+            ghcr.io/${{ github.repository }}:latest
+            ghcr.io/${{ github.repository }}:${{ github.sha }}
           build-args: |
             NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
             NEXT_PUBLIC_APP_URL=${{ secrets.NEXT_PUBLIC_APP_URL }}
