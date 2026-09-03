@@ -1,0 +1,310 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  username      String?   @unique
+  email         String?   @unique
+  emailVerified DateTime?
+  password      String?
+  image         String?
+  avatarUrl     String?
+  titles        String[]  @default([])
+  bio           String?
+  score         Int       @default(0)
+  role          String    @default("user")
+  banned        Boolean   @default(false)
+  bannedReason  String?
+  bannedAt      DateTime?
+  accounts      Account[]
+  sessions      Session[]
+  guides        Guide[]
+  diagnostics   Diagnostic[]
+  comments      DiagnosticComment[]
+  tools         Tool[]
+  likes         Like[]
+  reportsSent     UserReport[] @relation("UserReportSender")
+  reportsReceived UserReport[] @relation("UserReportTarget")
+  reportsHandled  UserReport[] @relation("UserReportHandler")
+  conversationsAsUser1 Conversation[] @relation("ConvUser1")
+  conversationsAsUser2 Conversation[] @relation("ConvUser2")
+  messagesSent Message[] @relation("MessageSender")
+  blockedUsers BlockedUser[] @relation("Blocker")
+  blockedBy    BlockedUser[] @relation("Blocked")
+  verificationCodes VerificationCode[]
+  passwordResetTokens PasswordResetToken[]
+  deviceSessions DeviceSession[]
+  auditLogs     AuditLog[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([createdAt])
+}
+
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String? @db.Text
+  access_token       String? @db.Text
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String? @db.Text
+  session_state      String?
+  user               User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model VerificationCode {
+  id        String    @id @default(cuid())
+  userId    String
+  type      String // "signup" | "reset"
+  codeHash  String
+  expiresAt DateTime
+  attempts  Int       @default(0)
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, type, usedAt])
+  @@index([createdAt])
+}
+
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  userId    String
+  tokenHash String
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([tokenHash])
+}
+
+model DeviceSession {
+  id         String    @id @default(cuid())
+  sessionId  String    @unique
+  userId     String
+  ip         String?
+  userAgent  String?
+  device     String?
+  os         String?
+  browser    String?
+  city       String?
+  region     String?
+  country    String?
+  createdAt  DateTime  @default(now())
+  lastSeenAt DateTime  @default(now())
+  revokedAt  DateTime?
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([sessionId])
+  @@index([revokedAt])
+}
+
+model Title {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+model Guide {
+  id         String   @id @default(cuid())
+  title      String
+  slug       String   @unique
+  content    String
+  authorId   String
+  category   String
+  viewsCount Int      @default(0)
+  author     User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  likes      Like[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([slug])
+  @@index([authorId])
+  @@index([createdAt])
+}
+
+model Diagnostic {
+  id          String              @id @default(cuid())
+  title       String
+  slug        String              @unique
+  content     String
+  authorId    String
+  author      User                @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  comments    DiagnosticComment[]
+  likes       Like[]
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+
+  @@index([slug])
+  @@index([authorId])
+  @@index([createdAt])
+}
+
+model DiagnosticComment {
+  id           String              @id @default(cuid())
+  content      String
+  editedAt     DateTime?
+  diagnosticId String
+  authorId     String
+  parentId     String?
+  parent       DiagnosticComment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies      DiagnosticComment[] @relation("CommentReplies")
+  diagnostic   Diagnostic          @relation(fields: [diagnosticId], references: [id], onDelete: Cascade)
+  author       User                @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  likes        Like[]
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+
+  @@index([diagnosticId])
+  @@index([authorId])
+  @@index([parentId])
+  @@index([createdAt])
+}
+
+model Tool {
+  id          String   @id @default(cuid())
+  name        String
+  condition   String
+  ownerId     String
+  isAvailable Boolean  @default(true)
+  owner       User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([ownerId])
+  @@index([createdAt])
+}
+
+model UserReport {
+  id          String    @id @default(cuid())
+  reporterId  String
+  reportedId  String
+  commentId   String?
+  reason      String
+  detail      String?
+  status      String    @default("open")
+  reporter    User      @relation("UserReportSender", fields: [reporterId], references: [id], onDelete: Cascade)
+  reported    User      @relation("UserReportTarget", fields: [reportedId], references: [id], onDelete: Cascade)
+  handler     User?     @relation("UserReportHandler", fields: [handledById], references: [id])
+  handledById String?
+  handledAt   DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@index([status])
+  @@index([reporterId])
+  @@index([reportedId])
+  @@index([createdAt])
+}
+
+model Conversation {
+  id        String    @id @default(cuid())
+  user1Id   String
+  user2Id   String
+  user1     User      @relation("ConvUser1", fields: [user1Id], references: [id], onDelete: Cascade)
+  user2     User      @relation("ConvUser2", fields: [user2Id], references: [id], onDelete: Cascade)
+  messages  Message[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@unique([user1Id, user2Id])
+  @@index([user2Id])
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  conversationId String
+  senderId       String
+  content        String
+  readAt         DateTime?
+  editedAt       DateTime?
+  deletedAt      DateTime?
+  deletedForIds  String[]     @default([])
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender         User         @relation("MessageSender", fields: [senderId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([conversationId, createdAt])
+  @@index([conversationId, updatedAt])
+}
+
+model Like {
+  id           String             @id @default(cuid())
+  userId       String
+  guideId      String?
+  diagnosticId String?
+  commentId    String?
+  createdAt    DateTime           @default(now())
+  user         User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  guide        Guide?             @relation(fields: [guideId], references: [id], onDelete: Cascade)
+  diagnostic   Diagnostic?        @relation(fields: [diagnosticId], references: [id], onDelete: Cascade)
+  comment      DiagnosticComment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, guideId])
+  @@unique([userId, diagnosticId])
+  @@unique([userId, commentId])
+  @@index([guideId])
+  @@index([diagnosticId])
+  @@index([commentId])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  adminId   String
+  action    String
+  target    String?
+  detail    String?
+  admin     User     @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@index([adminId])
+  @@index([action])
+  @@index([createdAt])
+}
+
+model BlockedUser {
+  id        String   @id @default(cuid())
+  blockerId String
+  blockedId String
+  blocker   User     @relation("Blocker", fields: [blockerId], references: [id], onDelete: Cascade)
+  blocked   User     @relation("Blocked", fields: [blockedId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([blockerId, blockedId])
+  @@index([blockedId])
+}

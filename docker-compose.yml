@@ -1,0 +1,16 @@
+services:
+  app:
+    image: ghcr.io/rmdnv/ruangmekanik:latest
+    pull_policy: always
+    container_name: ruangmekanik-app
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+    networks:
+      - production
+
+networks:
+  production:
+    external: true
