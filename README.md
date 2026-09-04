@@ -3,8 +3,8 @@
 # RuangMekanik
 ### Belajar & Bertanya Seputar Mekanik, Lebih Mudah
 
-[![Live Demo](https://img.shields.io/badge/%F0%9F%9A%80_Live_Demo-Visit_Site-success?style=for-the-badge)](https://[URL_DEMO])
-[![GitHub](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github)](https://[URL_REPO])
+[![Live Demo](https://img.shields.io/badge/%F0%9F%9A%80_Live_Demo-Visit_Site-success?style=for-the-badge)](https://ruangmekanik.smknurisjkt.org/)
+[![GitHub](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github)](https://github.com/rmdnv/ruangmekanik-itechonocup26)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
 
 **Submission for ITECHNO CUP 2026 - Web Development**
@@ -296,7 +296,7 @@ npm run db:seed        # Seed data awal
 | Nama | Peran | GitHub |
 |------|-------|--------|
 | **Ramadanu** | Project Lead & Full Stack Developer | [@rmdnv](https://github.com/rmdnv) |
-| **Mifzal Arif** | Frontend Developer | [@mifzalarif](https://github.com/Mifzalarif) |
+| **Mifzal Arif** | Frontend Developer | [@mifzalarif](https://github.com/arifmifzal486-cyber) |
 | **Rafa Silmi Abshar** | Frontend Developer | [@rafasilmiabshar134-pixel](https://github.com/rafasilmiabshar134-pixel) |
 
 ---
