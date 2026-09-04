@@ -206,25 +206,33 @@ npm install
 Buat file `.env.local` di root directory:
 
 ```env
-# Core
-DATABASE_URL="postgresql://user:password@host:5432/ruangmekanik?schema=public"
-NEXTAUTH_URL="http://localhost:3000"
+# ─── App ───────────────────────────────────────────────────────
+APP_NAME="RuangMekanik"
 NEXT_PUBLIC_APP_URL="http://localhost:3000"
+NODE_ENV="development"
 
-# Authentication
-NEXTAUTH_SECRET="replace-with-long-random-secret"
+# ─── Database ──────────────────────────────────────────────────
+DB_CONNECTION="pgsql"
+DB_HOST="localhost"
+DB_PORT="5432"
+DB_DATABASE="ruangmekanik"
+DB_USERNAME="your-db-username"
+DB_PASSWORD="your-db-password"
+
+# ─── Authentication (Auth.js / NextAuth) ──────────────────────
+NEXTAUTH_SECRET="generate-a-random-secret-at-least-16-chars"
 AUTH_GOOGLE_ID="your-google-oauth-client-id"
 AUTH_GOOGLE_SECRET="your-google-oauth-client-secret"
 
-# Email (Resend)
-RESEND_API_KEY="your-resend-api-key"
-EMAIL_FROM="RuangMekanik <no-reply@example.com>"
+# ─── Email (Resend) ───────────────────────────────────────────
+RESEND_API_KEY="re_your-resend-api-key"
+EMAIL_FROM="RuangMekanik <no-reply@yourdomain.com>"
 
-# Security / Bot protection (Cloudflare Turnstile)
+# ─── Security / Bot Protection (Cloudflare Turnstile) ──────────
 NEXT_PUBLIC_TURNSTILE_SITE_KEY="your-cloudflare-turnstile-site-key"
 TURNSTILE_SECRET_KEY="your-cloudflare-turnstile-secret-key"
 
-# Observability
+# ─── Geolocation (ipinfo.io) ──────────────────────────────────
 IPINFO_TOKEN="your-ipinfo-token"
 ```
 
@@ -287,9 +295,9 @@ npm run db:seed        # Seed data awal
 
 | Nama | Peran | GitHub |
 |------|-------|--------|
-| **Ramadanu** | Project Lead & Full Stack Developer | [@ramadanu](https://github.com/ramadanu) |
-| **Mifzal Arif** | Frontend Developer | [@mifzalarif](https://github.com/mifzalarif) |
-| **Rafa Silmi Abshar** | Frontend Developer | [@rafasilmi](https://github.com/rafasilmi) |
+| **Ramadanu** | Project Lead & Full Stack Developer | [@rmdnv](https://github.com/rmdnv) |
+| **Mifzal Arif** | Frontend Developer | [@mifzalarif](https://github.com/Mifzalarif) |
+| **Rafa Silmi Abshar** | Frontend Developer | [@rafasilmiabshar134-pixel](https://github.com/rafasilmiabshar134-pixel) |
 
 ---
 
